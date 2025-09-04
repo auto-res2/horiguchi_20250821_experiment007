@@ -1,0 +1,17 @@
+# Default experiment configuration for ASRIN experiments
+# Runs a quick test by default; adjust for full runs on GPU
+
+dataset: MNIST
+seeds: [0]
+# Training
+epochs: 2
+batch_size: 64
+# Model sizes (kept small for quick test)
+N: 128   # reservoir size
+P: 8     # patch size
+T: 6     # number of saccades
+# Subsets for quick run
+subset_train: 512
+subset_test: 256
+# Device preference: auto | cpu | cuda
+device: auto
