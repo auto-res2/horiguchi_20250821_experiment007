@@ -121,16 +121,23 @@ def occlude(x, frac=0.2, val=0.5):
 
 
 def fgsm_attack(model, images, labels, eps=0.1):
-    model.eval()
-    images = images.clone().detach().requires_grad_(True)
-    if isinstance(model, ASRIN):
-        logits = model(images, tau=0.3)
-    else:
-        logits = model(images)
-    loss = F.cross_entropy(logits, labels)
-    loss.backward()
-    adv = images + eps * images.grad.sign()
-    return adv.clamp(0, 1).detach()
+    prev_mode = model.training
+    try:
+        model.train()  # ensure cudnn RNN backward allowed
+        images = images.clone().detach().requires_grad_(True)
+        for p in model.parameters():
+            if p.grad is not None:
+                p.grad = None
+        if isinstance(model, ASRIN):
+            logits = model(images, tau=0.3)
+        else:
+            logits = model(images)
+        loss = F.cross_entropy(logits, labels)
+        loss.backward()
+        adv = images + eps * images.grad.sign()
+        return adv.clamp(0, 1).detach()
+    finally:
+        model.train(prev_mode)
 
 
 def evaluate_corruptions(model, loader, device, eps=0.1):
