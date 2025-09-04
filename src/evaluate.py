@@ -180,13 +180,18 @@ def occlude(x: torch.Tensor, area: float = 0.2) -> torch.Tensor:
 
 
 def fgsm_asrin(model: ASRIN, images: torch.Tensor, targets: torch.Tensor, eps: float = 0.1) -> torch.Tensor:
-    model.eval()
-    images_adv = images.clone().detach().requires_grad_(True)
-    logits_T, _ = model(images_adv, tau=0.5)
-    logits = logits_T[:, -1, :]
-    loss = F.cross_entropy(logits, targets)
-    loss.backward()
-    x_adv = torch.clamp(images_adv + eps * images_adv.grad.sign(), 0.0, 1.0).detach()
+    # Use training mode to allow cuDNN RNN backward, then restore original state
+    was_training = model.training
+    try:
+        model.train()
+        images_adv = images.clone().detach().requires_grad_(True)
+        logits_T, _ = model(images_adv, tau=0.5)
+        logits = logits_T[:, -1, :]
+        loss = F.cross_entropy(logits, targets)
+        loss.backward()
+        x_adv = torch.clamp(images_adv + eps * images_adv.grad.sign(), 0.0, 1.0).detach()
+    finally:
+        model.train(was_training)
     return x_adv
 
 

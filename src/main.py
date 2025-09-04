@@ -31,7 +31,7 @@ from .preprocess import get_mnist_loaders, get_small_mnist_loaders
 
 DEFAULT_CONFIG = {
     'seed': 7,
-    'output_dir': '.research/iteration2/images',
+    'output_dir': '.research/iteration3/images',
     'epochs': 2,
     'asrin': {'N': 128, 'T': 8, 'p': 6, 'grid_size': 8, 'lr': 1e-3},
     'raster': {'N': 128, 'T': 784, 'lr': 1e-3},
