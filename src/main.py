@@ -183,7 +183,12 @@ def run_experiment3(asrin_model: ASRIN, loader_train_small, loader_test_small, d
 
     print('Building K_ASRIN kernel (train/test) ...')
     Ktr = build_kernel(Xtr, alpha=0.3, g=1.0, rho=1.0, sigma_in=1.0, lam_dual=1.0)
-    Kte = build_kernel(np.concatenate([Xte, Xtr[:1]], axis=0), alpha=0.3, g=1.0, rho=1.0, sigma_in=1.0, lam_dual=1.0)[:len(Xte), :len(Xtr)]
+    # Build Kte as the cross-kernel between test and train using a combined Gram
+    X_comb = np.concatenate([Xte, Xtr], axis=0)
+    K_comb = build_kernel(X_comb, alpha=0.3, g=1.0, rho=1.0, sigma_in=1.0, lam_dual=1.0)
+    n_te = len(Xte)
+    n_tr = len(Xtr)
+    Kte = K_comb[:n_te, n_te:n_te + n_tr]
 
     # Simple KRR (one-vs-rest)
     alpha = 1e-2
@@ -276,8 +281,8 @@ def main():
     device = get_device(cfg.get('device', 'auto'))
     cfg['device'] = device
 
-    # Prepare image output dir (iteration5 as requested)
-    images_dir = os.path.join('.research', 'iteration5', 'images')
+    # Prepare image output dir (iteration6 as requested)
+    images_dir = os.path.join('.research', 'iteration6', 'images')
     ensure_dir(images_dir)
 
     # Run Experiment 1
