@@ -1,0 +1,17 @@
+seed: 7
+output_dir: .research/iteration1/images
+epochs: 2
+asrin:
+  N: 128
+  T: 8
+  p: 6
+  grid_size: 8
+  lr: 0.001
+raster:
+  N: 128
+  T: 784
+  lr: 0.001
+subsets:
+  train: 1024
+  val: 256
+  test: 512
