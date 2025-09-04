@@ -211,7 +211,7 @@ def rollout_patches(model: ASRIN, images: torch.Tensor) -> torch.Tensor:
     patches = []
     h_pol = None
     for _t in range(model.T):
-        res_ctx = F.linear(h, model.res_proj.T)
+        res_ctx = F.linear(h, model.res_proj)
         ctx = torch.cat([prev_emb, res_ctx], dim=-1).unsqueeze(1)
         logits_t, h_pol = model.policy(ctx, h0=h_pol)
         centers_t, _ = model.policy.sample_centers(logits_t, tau=0.5, hard=True)
@@ -252,7 +252,8 @@ def memory_capacity(reservoir: Reservoir, T: int = 1000, K: int = 30, lamb: floa
     # Map scalar to reservoir.in_dim via random fixed matrix if needed
     W_tmp = torch.randn(reservoir.in_dim, 1, device=device) / math.sqrt(reservoir.in_dim)
     for t in range(T):
-        x = (W_tmp @ u[t].T).T  # (1,in_dim)
+        u_t = u[t:t+1]  # (1,1)
+        x = u_t @ W_tmp.T  # (1,in_dim)
         h, _ = reservoir.step(h, x)
         H.append(h.clone())
     H = torch.cat(H, dim=0)  # (T,N)

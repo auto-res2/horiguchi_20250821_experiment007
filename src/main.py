@@ -31,7 +31,7 @@ from .preprocess import get_mnist_loaders, get_small_mnist_loaders
 
 DEFAULT_CONFIG = {
     'seed': 7,
-    'output_dir': '.research/iteration1/images',
+    'output_dir': '.research/iteration2/images',
     'epochs': 2,
     'asrin': {'N': 128, 'T': 8, 'p': 6, 'grid_size': 8, 'lr': 1e-3},
     'raster': {'N': 128, 'T': 784, 'lr': 1e-3},
@@ -80,7 +80,7 @@ def experiment_1_mnist(cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
         tl, ta = train_one_epoch_asrin(asrin, train_loader, opt, device=device, tau=tau)
         vl, va, ve, vcm, t90 = evaluate_asrin(asrin, val_loader, device=device, collect_curves=True)
         tr_losses.append(tl); val_accs.append(va)
-        print(f'[ASRIN] Epoch {e+1}/{cfg['epochs']} - train_loss={tl:.4f} train_acc={ta:.4f} val_acc={va:.4f} val_ece={ve:.4f} t90={t90 if t90 is not None else float('nan'):.2f}')
+        print(f"[ASRIN] Epoch {e+1}/{cfg['epochs']} - train_loss={tl:.4f} train_acc={ta:.4f} val_acc={va:.4f} val_ece={ve:.4f} t90={(t90 if t90 is not None else float('nan')):.2f}")
         if va > best_val:
             best_val = va
             best_state = asrin.state_dict()
@@ -89,7 +89,7 @@ def experiment_1_mnist(cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
 
     # Test ASRIN
     tl, acc_asrin, ece_asrin, cm_asrin, t90_asrin = evaluate_asrin(asrin, test_loader, device=device, collect_curves=True)
-    print(f'[ASRIN] Test acc={acc_asrin:.4f} ECE={ece_asrin:.4f} t90={t90_asrin if t90_asrin is not None else float('nan'):.2f}')
+    print(f"[ASRIN] Test acc={acc_asrin:.4f} ECE={ece_asrin:.4f} t90={(t90_asrin if t90_asrin is not None else float('nan')):.2f}")
 
     # Raster baseline
     raster_T = cfg['raster']['T']
@@ -100,9 +100,9 @@ def experiment_1_mnist(cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
         tlr, tar = train_one_epoch_raster(raster, train_loader, opt_r, device=device)
         vlr, var, ver, vcmr, t90r = evaluate_raster(raster, val_loader, device=device, collect_curves=True)
         tr_losses_r.append(tlr); val_accs_r.append(var)
-        print(f'[Raster] Epoch {e+1}/{max(1, cfg['epochs']-1)} - train_loss={tlr:.4f} train_acc={tar:.4f} val_acc={var:.4f} val_ece={ver:.4f} t90={t90r if t90r is not None else float('nan'):.2f}')
+        print(f"[Raster] Epoch {e+1}/{max(1, cfg['epochs']-1)} - train_loss={tlr:.4f} train_acc={tar:.4f} val_acc={var:.4f} val_ece={ver:.4f} t90={(t90r if t90r is not None else float('nan')):.2f}")
     tlr, acc_raster, ece_raster, cm_raster, t90_raster = evaluate_raster(raster, test_loader, device=device, collect_curves=True)
-    print(f'[Raster] Test acc={acc_raster:.4f} ECE={ece_raster:.4f} t90={t90_raster if t90_raster is not None else float('nan'):.2f}')
+    print(f"[Raster] Test acc={acc_raster:.4f} ECE={ece_raster:.4f} t90={(t90_raster if t90_raster is not None else float('nan')):.2f}")
 
     # Plots: training loss and val accuracy curves
     plot_and_save_line(list(range(1, len(tr_losses)+1)), {'asrin': tr_losses}, 'epoch', 'train loss', 'Training Loss (ASRIN)', out_dir, 'training_loss_asrin.pdf')
@@ -118,7 +118,7 @@ def experiment_1_mnist(cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
     # FLOPs proxy comparison
     flops_asrin = flops_proxy_reservoir(asrin.res, T=cfg['asrin']['T'], input_dim=cfg['asrin']['p']*cfg['asrin']['p'])
     flops_raster = flops_proxy_reservoir(raster.res, T=raster_T, input_dim=1)
-    print(f'[Compute] FLOPs proxy - ASRIN ~ {flops_asrin/1e6:.2f}M vs Raster ~ {flops_raster/1e6:.2f}M; reduction ~ {flops_raster/max(1, flops_asrin):.1f}x')
+    print(f"[Compute] FLOPs proxy - ASRIN ~ {flops_asrin/1e6:.2f}M vs Raster ~ {flops_raster/1e6:.2f}M; reduction ~ {flops_raster/max(1, flops_asrin):.1f}x")
     plot_and_save_bar(['ASRIN','Raster'], [acc_asrin, acc_raster], 'test accuracy', 'Accuracy Comparison', out_dir, 'accuracy_asrin_vs_raster.pdf')
 
     # Save ASRIN model
@@ -169,7 +169,7 @@ def experiment_2_robustness(asrin_model: ASRIN, cfg: Dict[str, Any], device: str
         'fgsm': acc_clean - acc_fgsm,
     }
 
-    print(f'Clean acc={acc_clean:.4f}; Δacc noise0.1={deltas["noise_0.1"]:.4f}, noise0.3={deltas["noise_0.3"]:.4f}, rot15={deltas["rot15"]:.4f}, occ20={deltas["occ20"]:.4f}, fgsm={deltas["fgsm"]:.4f}')
+    print(f"Clean acc={acc_clean:.4f}; Δacc noise0.1={deltas['noise_0.1']:.4f}, noise0.3={deltas['noise_0.3']:.4f}, rot15={deltas['rot15']:.4f}, occ20={deltas['occ20']:.4f}, fgsm={deltas['fgsm']:.4f}")
 
     # Saccade stability example
     images, targets = next(iter(test_loader))

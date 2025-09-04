@@ -1,5 +1,5 @@
 seed: 7
-output_dir: .research/iteration1/images
+output_dir: .research/iteration2/images
 epochs: 2
 asrin:
   N: 128

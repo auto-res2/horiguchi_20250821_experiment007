@@ -152,7 +152,7 @@ class ASRIN(nn.Module):
         logits_list, centers_list = [], []
         h_pol = None
         for t in range(self.T):
-            res_ctx = F.linear(h.detach(), self.res_proj.T)  # (B,64)
+            res_ctx = F.linear(h.detach(), self.res_proj)  # (B,64)
             ctx = torch.cat([prev_emb, res_ctx], dim=-1).unsqueeze(1)  # (B,1,128)
             logits_t, h_pol = self.policy(ctx, h0=h_pol)
             centers_t, _ = self.policy.sample_centers(logits_t, tau=tau, hard=True)
