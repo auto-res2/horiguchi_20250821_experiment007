@@ -133,18 +133,18 @@ def fgsm_attack(model, images, labels, eps=0.1):
     return adv.clamp(0, 1).detach()
 
 
-@torch.no_grad()
 def evaluate_corruptions(model, loader, device, eps=0.1):
     model.eval()
 
     def eval_on(data_iter):
         total, correct = 0, 0
-        for images, labels in data_iter:
-            images, labels = images.to(device), labels.to(device)
-            logits = model(images, tau=0.3) if isinstance(model, ASRIN) else model(images)
-            pred = logits.argmax(1)
-            correct += (pred == labels).sum().item()
-            total += labels.size(0)
+        with torch.no_grad():
+            for images, labels in data_iter:
+                images, labels = images.to(device), labels.to(device)
+                logits = model(images, tau=0.3) if isinstance(model, ASRIN) else model(images)
+                pred = logits.argmax(1)
+                correct += (pred == labels).sum().item()
+                total += labels.size(0)
         return correct / total
 
     # Clean
@@ -164,11 +164,13 @@ def evaluate_corruptions(model, loader, device, eps=0.1):
     total, correct = 0, 0
     for images, labels in loader:
         images, labels = images.to(device), labels.to(device)
-        adv = fgsm_attack(model, images, labels, eps=eps)
-        logits = model(adv, tau=0.3) if isinstance(model, ASRIN) else model(adv)
-        pred = logits.argmax(1)
-        correct += (pred == labels).sum().item()
-        total += labels.size(0)
+        with torch.enable_grad():
+            adv = fgsm_attack(model, images, labels, eps=eps)
+        with torch.no_grad():
+            logits = model(adv, tau=0.3) if isinstance(model, ASRIN) else model(adv)
+            pred = logits.argmax(1)
+            correct += (pred == labels).sum().item()
+            total += labels.size(0)
     acc_adv = correct / total
 
     deltas = {

@@ -275,8 +275,8 @@ def main():
     device = get_device(cfg.get('device', 'auto'))
     cfg['device'] = device
 
-    # Prepare image output dir (iteration2 as requested)
-    images_dir = os.path.join('.research', 'iteration2', 'images')
+    # Prepare image output dir (iteration3 as requested)
+    images_dir = os.path.join('.research', 'iteration3', 'images')
     ensure_dir(images_dir)
 
     # Run Experiment 1
