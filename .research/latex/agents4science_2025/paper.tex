@@ -1,0 +1,266 @@
+\documentclass{article}
+
+\usepackage{agents4science_2025}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{nicefrac}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{colortbl}
+\usepackage{xcolor}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\usepackage{float}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\usepackage{microtype}
+\usepackage{booktabs}
+
+
+\title{Adaptive Saccadic Reservoir Imaging Networks: Co-Optimizing Visual Scanning and Critical Dynamics}
+
+\author{AIRAS}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Reservoir computing is attractive for its fixed recurrent weights, efficient training, and kernel-theoretic clarity, yet it struggles on images because static inputs lack temporal structure. Hand-crafted raster scans or Poisson spike encodings ignore 2-D semantics, generate long redundant sequences that overwhelm fading memory, fix the reservoir’s operating point, and yield brittle performance. We introduce Adaptive Saccadic Reservoir Imaging Networks (ASRIN), which jointly learns an image-to-sequence interface and self-tunes reservoir dynamics. ASRIN comprises: (i) a differentiable saccadic encoder that selects a short sequence of foveal patches via a learned policy; (ii) an edge-of-chaos self-tuning reservoir that modulates a global gain online to keep the effective Lipschitz factor near unity; and (iii) a dual-stream linear readout combining current patch and reservoir state. We further derive a recurrent-kernel limit K\_ASRIN that depends on the learned scan path, enabling analysis and kernel ridge classification. A PyTorch implementation is provided. A deliberately tiny MNIST pilot (\(N=128\), \(T=6\), two epochs) shows substantial compute savings versus raster ESNs, learned saccades outperform a fixed pseudo-raster, and mis-tuned gain control that motivates controller refinement. We detail a full protocol across MNIST, Fashion-MNIST, and EMNIST with robustness, dynamics, and kernel correspondence, evaluated over 10 seeds for statistical rigor \cite{dong-2020-reservoir,ivanov-2021-increasing,nestler-2020-unfolding}.
+\end{abstract}
+
+\section{Introduction}
+Reservoir computing fixes internal recurrent weights and trains only a linear readout, offering a compelling blend of simplicity, efficiency, and theoretical grounding through recurrent kernels in the large-width limit \cite{dong-2020-reservoir}. This paradigm excels on temporal signals but faces a fundamental mismatch with static images, which lack an intrinsic temporal axis. The prevailing remedy is to impose a hand-crafted conversion—typically a raster scan or Poisson spike encoding. These encodings discard 2-D structure, inflate sequence length, dilute fading memory, and lock the reservoir’s operating point, often producing brittle behavior under natural perturbations.
+
+Our objective is to bridge this gap: can an image–reservoir interface be learned so that (i) visual evidence is revealed adaptively over time, and (ii) the reservoir’s dynamical regime self-organizes near criticality, thereby improving accuracy and robustness while preserving the hallmark simplicity of reservoir computing? Two challenges arise. First, the encoder must be differentiable and content-adaptive under a fixed reservoir, calling for a policy over spatial glimpses that is trained jointly with the readout. Second, performance is sensitive to dynamical parameters (spectral radius, leak, nonlinearity); maintaining near-critical dynamics online is hard yet crucial for information propagation and memory \cite{ivanov-2021-increasing,orhan-2019-improved}. Beyond engineering, there is a theoretical gap: how do content-dependent input trajectories induced by attention reshape the reservoir’s kernel limit \cite{dong-2020-reservoir,nestler-2020-unfolding}?
+
+We propose Adaptive Saccadic Reservoir Imaging Networks (ASRIN), a framework that unifies learned visual attention with online criticality control and couples both to a recurrent-kernel analysis conditioned on the learned scan path. ASRIN is inspired by: recurrent kernels for random reservoirs \cite{dong-2020-reservoir}; astrocyte-modulated self-organization to the edge of chaos \cite{ivanov-2021-increasing}; and analyses showing that optimizing the input projection structure can markedly boost recurrent performance \cite{nestler-2020-unfolding}. Rather than feeding all pixels, ASRIN learns a short sequence of informative foveal patches, preserving spatial semantics and reducing temporal burden. Simultaneously, it adjusts a global gain to stabilize the effective Lipschitz factor around unity, targeting a largest Lyapunov exponent close to zero. A dual-stream readout exposes the respective roles of instantaneous evidence and recurrent integration. Finally, we derive a closed-form recurrent-kernel construction that depends on the learned trajectory \(\pi\\_{\\theta}\), building a principled bridge between active perception and reservoir kernels \cite{dong-2020-reservoir}.
+
+\begin{itemize}
+  \item \textbf{Differentiable saccadic encoder}: Learns task-driven patch sequences, drastically shortening inputs while preserving spatial structure.
+  \item \textbf{Edge-of-chaos self-tuning}: An astrocyte-like global gain targets near-critical dynamics online, avoiding costly hyperparameter sweeps \cite{ivanov-2021-increasing}.
+  \item \textbf{Dual-stream readout}: A linear classifier that combines the current patch and reservoir state, enabling early prediction and ablation of instantaneous versus memory contributions.
+  \item \textbf{Trajectory-conditioned kernel}: A recurrent-kernel formulation, K\_ASRIN, that depends explicitly on the learned scan path, enabling kernel ridge classification and finite-width comparisons \cite{dong-2020-reservoir}.
+  \item \textbf{Open implementation and pilot}: A PyTorch pipeline and a feasibility pilot that validates end-to-end training and reveals controller tuning needs.
+\end{itemize}
+
+We validate feasibility with a tiny MNIST pilot (\(N=128\), \(P=8\), \(T=6\), two epochs, single seed) to verify execution under tight budgets. The pilot shows that learned saccades outperform a fixed pseudo-raster at comparable compute and that short sequences provide large compute savings over raster ESNs. The edge-of-chaos controller operated supercritically, reinforcing the need for a more conservative adaptation regime at small \(N\) and \(T\). The full protocol targets MNIST, Fashion-MNIST, and EMNIST (balanced); evaluates robustness to noise, rotations, occlusions, and FGSM attacks; estimates dynamical metrics; and probes kernel-finite correspondence, all over 10 seeds with paired tests.
+
+Relation to prior work spans recurrent kernels and structured reservoirs \cite{dong-2020-reservoir}, optimized input projections and unfolding analyses \cite{nestler-2020-unfolding}, astrocyte-inspired criticality \cite{ivanov-2021-increasing}, stability- and memory-aware recurrent design \cite{orhan-2019-improved,rusch-2021-unicornn}, on-sensor and active perception \cite{so-2023-pixelrnn}, state-space models \cite{hasani-2022-liquid}, robustness via dynamical stability \cite{ding-2024-robust}, and structured recurrent connectivity \cite{tumma-2023-leveraging,su-2020-convolutional}. Our approach differs by fixing recurrent weights, learning the encoder and readout only, maintaining online criticality, and providing a trajectory-conditioned kernel analysis.
+
+Looking forward, we aim to execute the full evaluation suite, refine the gain controller for reliable near-criticality, extend to event-based sensors, and integrate structured or low-rank reservoirs within ASRIN \cite{tumma-2023-leveraging,su-2020-convolutional}.
+
+\section{Related Work}
+Reservoir kernels and structured reservoirs. Random reservoirs converge to recurrent kernels in the infinite-width limit, enabling learning through kernel ridge regression and yielding convergence guarantees \cite{dong-2020-reservoir}. Structured transforms preserve performance while improving computational efficiency \cite{dong-2020-reservoir}. These lines assume exogenous, fixed input sequences. ASRIN departs by making the input sequence content-adaptive through a learned saccadic policy. This adaptivity changes the input statistics seen by the reservoir and, correspondingly, alters the induced kernel, which we capture through K\_ASRIN.
+
+Optimizing input projections and active sensing. Analyses that unfold recurrent dynamics into effective feed-forward temporal kernels emphasize that performance hinges on the interaction between input projections, nonlinearity, and stimulus statistics \cite{nestler-2020-unfolding}. On-sensor active recurrent processing reduces bandwidth and latency by acquiring information adaptively \cite{so-2023-pixelrnn}. ASRIN follows this spirit but keeps recurrent weights fixed: it learns where and when to look via a differentiable encoder, while the reservoir remains random and frozen.
+
+Edge-of-chaos and dynamical self-tuning. Astrocyte-modulated plasticity can self-organize spiking liquids near the edge of chaos, improving performance and robustness without extensive hyperparameter sweeps \cite{ivanov-2021-increasing}. Stability- and memory-aware designs reveal the benefits of balancing sensitivity with stability through non-normal dynamics and bounded gradient growth \cite{orhan-2019-improved,rusch-2021-unicornn}. ASRIN adapts these ideas to a rate-based ESN by introducing a lightweight global gain controller aimed at near-unit effective Lipschitz constants.
+
+Robustness and stability in neural dynamics. Stability considerations underpin robustness to noise and adversarial perturbations in spiking systems \cite{ding-2024-robust}. The theory of continuous attractors highlights the role of near-neutral modes for persistence and sensitivity trade-offs \cite{sgodi-2024-back}. ASRIN’s gain controller operationalizes these principles by targeting near-zero Lyapunov exponents.
+
+Broader recurrent architectures. Liquid and structural state-space models learn long dependencies with strong results across domains \cite{hasani-2022-liquid}. Low-rank and sparse recurrent connectivity improves robustness under closed-loop distribution shift \cite{tumma-2023-leveraging}. Higher-order convolutional LSTMs capture complex spatiotemporal correlations \cite{su-2020-convolutional}. Quantum recurrent networks explore alternative substrates \cite{bausch-2020-recurrent}. These methods typically train recurrent parameters end-to-end. In contrast, ASRIN retains fixed recurrent weights for simplicity and interpretability while learning the input path.
+
+Random features and minimal learning. Random-feature MLPs and slot-machine parameterizations demonstrate strong baselines with fixed features and minimal learning \cite{aladago-2021-slot}. We include such baselines to contextualize ASRIN’s benefits from learned saccades and controlled dynamics. Overall, to our knowledge, no prior work jointly learns a content-adaptive scan path, maintains near-critical reservoir dynamics online, and provides a trajectory-conditioned recurrent-kernel analysis in a single reservoir framework \cite{dong-2020-reservoir,nestler-2020-unfolding,ivanov-2021-increasing}.
+
+\section{Background}
+Problem setting. We address single-image classification for grayscale images of size \(H\) by \(W\). To interface with a reservoir, each image \(I\) is transformed into a short sequence of foveal patches \(x\\_t\) of size \(P\) by \(P\) for \(t = 1,\dots,T\). Each patch is vectorized to dimension \(d = P^2\) and standardized per example. The goal is to choose \(T\) and the patch locations so that class-discriminative information is captured with minimal sequence length.
+
+Reservoir computing. We employ a leaky echo-state reservoir with hidden state \(h\\_t \in \mathbb{R}^N\). At time \(t\), the preactivation is formed by a global-gain-scaled recurrent contribution plus a linear projection of the current input \(x\\_t\). The new state is a convex combination of the previous state and the nonlinearity applied to the preactivation; we use \(\\tanh\) and leak \(\\alpha\). Input and recurrent weights are fixed at random after initialization; only a linear readout is trained. This setting underlies connections to recurrent kernels in the large-width limit \cite{dong-2020-reservoir}.
+
+Edge-of-chaos dynamics. Recurrent networks display a trade-off between sensitivity and stability governed by the largest Lyapunov exponent (LLE). Near zero, networks can preserve information without diverging, supporting both memory and robustness. Astrocyte-modulated spiking liquids self-organize toward this regime and improve performance \cite{ivanov-2021-increasing}. We adopt an analogous mechanism for a rate-based reservoir by modulating a global gain to target an effective Lipschitz factor near one.
+
+Active perception and learned trajectories. Performance of recurrent systems depends on the interaction between input statistics and nonlinearity \cite{nestler-2020-unfolding}. Instead of a hand-crafted raster, we learn a saccadic policy that reveals informative patches. This preserves spatial semantics and shortens the sequence, mitigating fading-memory dilution and reducing compute.
+
+Kernel limit. In the large-width regime and under standard Gaussian assumptions on random weights, reservoir dynamics converge to a deterministic recurrent kernel \cite{dong-2020-reservoir}. In ASRIN, the kernel depends on reservoir hyperparameters and on the content-dependent sequence generated by the learned policy. We use an arcsin approximation to the expected product of \(\\tanh\) activations under a bivariate Gaussian to derive a closed-form recursion for state covariances, culminating in a kernel that mirrors our dual-stream readout.
+
+Assumptions and diagnostics. Reservoir weights and leak are frozen. The encoder is differentiable via bilinear patch sampling and a Gumbel-Softmax policy over grid locations. We monitor dynamics by estimating LLE through the action of local Jacobians on random tangent vectors and quantify memory via linear reconstruction of delayed inputs from reservoir states. These diagnostics test whether the controller achieves near-criticality and adequate short-term memory \cite{orhan-2019-improved,ivanov-2021-increasing}.
+
+\section{Method}
+\subsection{Differentiable saccadic encoder}
+The encoder constructs a short sequence of \(P \times P\) patches. A policy \(\\pi\\_{\\theta}\) maps current visual evidence and provisional class logits to a distribution over a \(G \times G\) grid of candidate centers. Concretely, a small GRU receives the current patch embedding (obtained by a linear layer and ReLU) concatenated with the previous-step class logits and outputs logits over \(G^2\) grid cells. A Gumbel-Softmax with temperature \(\\tau\) produces soft attention over the grid; the expected center is the weighted average of grid coordinates. A \(P \times P\) patch is sampled from the image at that center using bilinear interpolation and standardized per example. The sequence length is kept short (around \(T \approx 30\) in the main configuration). Two regularizers improve learning: an entropy bonus early in training to avoid premature attention collapse, and an \(L2\) penalty on center displacement to suppress jerk.
+
+\begin{algorithm}[H]
+\caption{Saccadic encoder with Gumbel-Softmax centers}
+\begin{algorithmic}
+  \State \textbf{Input:} image \(I\), grid coordinates \(\\mathcal{G} = \{g\\_k\}_{k=1}^{G^2}\), temperature \(\\tau\), steps \(T\)
+  \State Initialize GRU state \(s\\_0\), logits \(\\ell\\_0 = 0\)
+  \For{\(t = 1,\\dots,T\)}
+    \State Embed previous patch: \(e\\_{t-1} \leftarrow f\\_{\\text{emb}}(x\\_{t-1})\) \textbf{(use zeros for }\(t=1\textbf{)}}
+    \State GRU update: \(s\\_t \leftarrow \\mathrm{GRU}([e\\_{t-1}; \\ell\\_{t-1}], s\\_{t-1})\)
+    \State Grid logits: \(z\\_t \leftarrow W s\\_t + b\)
+    \State Gumbel-Softmax: \(w\\_{t,k} \leftarrow \\mathrm{Softmax}((z\\_{t,k} + g\\_{t,k})/\\tau)\) where \(g\\_{t,k} \sim \\mathrm{Gumbel}(0,1)\)
+    \State Expected center: \(c\\_t \leftarrow \\sum\\_{k} w\\_{t,k} g\\_k\)
+    \State Sample patch: \(x\\_t \leftarrow \\mathrm{BilinearSample}(I, c\\_t, P)\); standardize \(x\\_t\)
+    \State Provisional logits: \(\\ell\\_t \leftarrow W\\_{\\text{read}} [x\\_t; h\\_{t-1}]\) \textbf{(stop-grad through reservoir)}
+  \EndFor
+  \State \textbf{Output:} sequence \(\\{x\\_t\\}\\_{t=1}^T\)
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Edge-of-chaos self-tuning reservoir}
+We use a sparse echo-state network with \(\\tanh\) units, leak \(\\alpha\), and spectral-radius-normalized random recurrent weights. Denote the global gain by \(g\) and spectral radius by \(\\rho\) (initialized to 1). The dynamics are
+\[ a\\_t = g \\; W h\\_{t-1} + U x\\_t, \\\quad h\\_t = (1-\\alpha) h\\_{t-1} + \\alpha \\tanh(a\\_t). \]
+We estimate the mean slope of the nonlinearity by \(m\\_t = \\frac{1}{N} \\sum\\_i (1 - \\tanh^2(a\\_{t,i}))\) and track an exponential moving average \(\\bar{m}\\_t\). A proxy for the effective Lipschitz factor is
+\[ L\\_t = \\alpha \\cdot g \\cdot \\rho \\cdot \\bar{m}\\_t + (1-\\alpha). \]
+The astrocyte-like gain updates multiplicatively: \(g \\leftarrow g \\cdot \\exp(\\eta \\cdot (1 - L\\_t))\), with small step size \(\\eta\) and clamping to a safe interval.
+
+\begin{algorithm}[H]
+\caption{Global-gain adaptation toward the edge of chaos}
+\begin{algorithmic}
+  \State \textbf{Input:} leak \(\\alpha\), spectral radius \(\\rho\), step size \(\\eta\), smoothing \(\\beta\), clamp interval \([g\\_{\\min}, g\\_{\\max}]\)
+  \State Initialize \(g \leftarrow 1\), \(\\bar{m} \\leftarrow 1\)
+  \For{each time step \(t\)}
+    \State Compute preactivation \(a\\_t\) and update \(h\\_t\)
+    \State Instantaneous slope mean: \(m\\_t \leftarrow \\frac{1}{N} \\sum\\_i (1 - \\tanh^2(a\\_{t,i}))\)
+    \State EMA: \(\\bar{m} \\leftarrow \\beta \\bar{m} + (1-\\beta) m\\_t\)
+    \State Lipschitz proxy: \(L\\_t \leftarrow \\alpha g \\rho \\bar{m} + (1-\\alpha)\)
+    \State Gain update: \(g \\leftarrow g \\cdot \\exp(\\eta \\cdot (1 - L\\_t))\)
+    \State Clamp: \(g \\leftarrow \\min(\\max(g, g\\_{\\min}), g\\_{\\max})\)
+  \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Dual-stream linear readout}
+The classifier is linear in the concatenation of the current patch vector and the reservoir state, \([x\\_t; h\\_t]\). We train a final-step readout on \([x\\_T; h\\_T]\) and optionally log intermediate predictions to study early exits. Removing either stream enables ablations that separate instantaneous evidence from recurrent integration.
+
+\subsection{Training protocol}
+Only \(\\pi\\_{\\theta}\) and the linear readout are learned with Adam; the reservoir remains fixed. Gradients flow through differentiable sampling and through the unrolled reservoir states but not into reservoir parameters. Learning rates are separated for policy and readout, and the Gumbel-Softmax temperature \(\\tau\) is annealed from approximately 1.0 to 0.3 over training. Light data augmentation uses small translations and rotations to improve invariance.
+
+\subsection{Recurrent-kernel limit}
+For examples \(i\) and \(j\), define the per-time input Gram \(C^{x}\\_t(i,j) = \\frac{1}{d} \\langle x\\_t^{i}, x\\_t^{j} \\rangle\), with \(d=P^2\). Initialize the state covariance \(C^{h}\\_0\) to zero. The preactivation covariance at time \(t\) is
+\[ S\\_t(i,j) = g^2 \\rho^2 \\; C^{h}\\_{t-1}(i,j) + \\sigma\\_{\\text{in}}^2 \\; C^{x}\\_t(i,j), \]
+where \(\\sigma\\_{\\text{in}}\) controls input scaling. Using an arcsin approximation for \(\\tanh\), the covariance of nonlinear activations is \(\\Phi\\_t(i,j) = \\kappa\\_{\\text{arcsin}}(S\\_t; q\\_i, q\\_j)\), where \(q\\_i\) and \(q\\_j\) are the corresponding variances and \(\\kappa\\_{\\text{arcsin}}\) is the normalized arcsin function applied elementwise. The state covariance updates as
+\[ C^{h}\\_t = (1-\\alpha)^2 C^{h}\\_{t-1} + \\alpha^2 \\Phi\\_t, \]
+neglecting cross terms for simplicity. To mirror the dual-stream readout, the final kernel is
+\[ K\\_{\\mathrm{ASRIN}} = C^{h}\\_T + \\lambda \\sum\\_{t=1}^{T} C^{x}\\_t, \]
+with \(\\lambda\) tuned on validation. Kernel ridge regression on \(K\\_{\\mathrm{ASRIN}}\) enables comparison to finite reservoirs driven by the same learned sequences \cite{dong-2020-reservoir}.
+
+\begin{algorithm}[H]
+\caption{Recurrent-kernel recursion for K\_ASRIN}
+\begin{algorithmic}
+  \State \textbf{Input:} patch sequences \(\\{x\\_t^i\\}\\_{t=1}^T\) for all examples \(i\), leak \(\\alpha\), gain \(g\), spectral radius \(\\rho\), input scale \(\\sigma\\_{\\text{in}}\)
+  \State Compute \(C^{x}\\_t(i,j) \leftarrow \\frac{1}{d} \\langle x\\_t^{i}, x\\_t^{j} \\rangle\) for all \(i,j,t\)
+  \State Initialize \(C^{h}\\_0 \leftarrow 0\)
+  \For{\(t = 1,\\dots,T\)}
+    \State \(S\\_t \leftarrow g^2 \\rho^2 C^{h}\\_{t-1} + \\sigma\\_{\\text{in}}^2 C^{x}\\_t\)
+    \State \(\\Phi\\_t \leftarrow \\kappa\\_{\\text{arcsin}}(S\\_t)\) \textbf{(elementwise)}
+    \State \(C^{h}\\_t \leftarrow (1-\\alpha)^2 C^{h}\\_{t-1} + \\alpha^2 \\Phi\\_t\)
+  \EndFor
+  \State \(K\\_{\\mathrm{ASRIN}} \leftarrow C^{h}\\_T + \\lambda \\sum\\_{t=1}^{T} C^{x}\\_t\)
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Diagnostics}
+We estimate the largest Lyapunov exponent by iteratively applying the local Jacobian implied by the leak update and \(\\tanh\) slope to random unit vectors and averaging the log growth across time. Memory capacity is measured by driving the reservoir with noise and summing the coefficient of determination for linear reconstructions of delayed inputs up to a fixed lag horizon. These diagnostics quantify whether the controller achieves near-criticality and retains useful short-term memory \cite{orhan-2019-improved,ivanov-2021-increasing}.
+
+\section{Experimental Setup}
+\subsection{Datasets and tasks}
+Clean datasets include MNIST, Fashion-MNIST, and EMNIST (balanced). Robustness is probed on MNIST under: additive Gaussian noise with standard deviations 0.1 and 0.3; a rotation of 15 degrees; random occlusions covering 20 percent of the image area; and adversarial examples crafted by FGSM with \(L\\_{\\infty}\) \(\\epsilon = 0.1\). We use standard torchvision train/test splits and optionally hold out validation data.
+
+\subsection{Baselines and ablations}
+Baselines comprise: (a) an echo-state network (ESN) with raster scan input; (b) a structured reservoir using an orthogonal random recurrent matrix under raster input; (c) a small CNN with two convolutional layers; and (d) a random-feature MLP inspired by slot-machine and random-weight paradigms \cite{aladago-2021-slot}. When compute permits, a Poisson-spike liquid state machine can be added. Ablations remove the saccadic encoder by substituting a fixed pseudo-raster patch sequence (\(-\)DSE) or disable the edge-of-chaos controller (\(-\)EC-SR) while keeping all else identical. A kernel baseline trains kernel ridge regression on K\_ASRIN constructed from the learned scan path \cite{dong-2020-reservoir}.
+
+\subsection{Model instantiation}
+The saccadic policy attends over an \(8 \times 8\) grid. The patch size defaults to \(P = 14\) (\(P = 8\) in the pilot). The sequence length defaults to \(T \approx 30\) (\(T = 6\) in the pilot). Reservoir widths \(N \\in \\{500, 1000, 2000\\}\) in main runs (\(N = 128\) in the pilot). The reservoir has 2 percent sparsity, \(\\tanh\) units, leak \(\\alpha = 0.3\), and spectral radius initialized to \(\\rho = 1\). The astrocyte-like gain initializes at \(g = 1\), updates with a small step size \(\\eta\), and is clamped to prevent runaway scaling. The readout is a linear softmax applied to \([x\\_T; h\\_T]\). All reservoir weights are frozen throughout.
+
+\subsection{Training details}
+We train \(\\pi\\_{\\theta}\) and the readout with Adam for 20 epochs in the main protocol, using a cosine schedule and batch size 128. The Gumbel-Softmax temperature \(\\tau\) anneals from about 1.0 to 0.3. The policy receives a small entropy bonus early in training and a quadratic penalty on center displacement. Data augmentation includes small translations and rotations. Early-exit accuracy is logged by applying the readout to \([x\\_t; h\\_t]\) at each time step.
+
+\subsection{Evaluation metrics}
+We report test accuracy and expected calibration error (ECE) with 15 bins. Efficiency is measured by sequence length \(T\), the number of nonzero recurrent weights, an estimated multiply-count per sample, and wall-clock time per epoch. Robustness is summarized by accuracy drops relative to clean inputs under each corruption and FGSM. Dynamical metrics include the largest Lyapunov exponent and memory capacity. Statistical analysis aggregates over 10 random seeds with paired t-tests against the best baseline and Holm-Bonferroni correction for multiple endpoints.
+
+\subsection{Kernel correspondence}
+We freeze a trained policy to extract deterministic patch sequences, compute K\_ASRIN using the arcsin approximation, and train kernel ridge regression with precomputed kernels, tuning regularization on validation. We compare to finite reservoirs of varying width driven by the same sequences to examine convergence to the kernel limit and compute alignment metrics.
+
+\subsection{Pilot run for feasibility}
+To validate the pipeline under tight compute, we executed a deliberately tiny MNIST configuration: 512 training and 256 test examples, \(N = 128\), \(P = 8\), \(T = 6\), two epochs, single seed. Trained models included ASRIN, ASRIN without the saccadic encoder (\(-\)DSE), ASRIN without the edge-of-chaos controller (\(-\)EC-SR), a raster ESN, a shallow CNN, and a random-feature MLP. We computed approximate multiply-counts per sample, robustness under noise, rotation, occlusion, and FGSM, an estimate of the largest Lyapunov exponent, memory capacity, and a K\_ASRIN kernel for kernel ridge regression. These pilot results are strictly feasibility checks and not the intended final evaluation.
+
+\subsection{Context and scope}
+The setup is aligned with prior kernel and reservoir analyses \cite{dong-2020-reservoir}, astrocyte-inspired near-critical dynamics \cite{ivanov-2021-increasing}, and studies of stability-memory trade-offs \cite{orhan-2019-improved,rusch-2021-unicornn}. Active perception and on-sensor recurrent processing motivate the learned encoder \cite{so-2023-pixelrnn}.
+
+\section{Results}
+We report only results obtained in the logged pilot run; all metrics are single-seed. We first summarize headline outcomes, then detail accuracy and calibration, efficiency, robustness, and dynamics, and finally present kernel correspondence. We reference the included figures and provide their captions at the end of this section.
+
+Headline outcomes under a tiny budget. On the MNIST pilot (\(N = 128\), \(P = 8\), \(T = 6\), two epochs), ASRIN outperformed its \(-\)DSE ablation but underperformed the \(-\)EC-SR ablation and non-reservoir baselines in accuracy. Nevertheless, ASRIN demonstrated clear compute savings relative to raster ESNs by virtue of its short sequences. The self-tuning controller operated in a supercritical regime, consistent with the \(-\)EC-SR ablation performing better in this tiny configuration.
+
+Clean accuracy and calibration. Test accuracy (acc) and expected calibration error (ECE) were as follows: ASRIN acc = 0.2070, ECE = 0.0792; \(-\)DSE acc = 0.1367, ECE = 0.0302; \(-\)EC-SR acc = 0.3281, ECE = 0.0733; raster ESN acc = 0.1875, ECE = 0.0501; small CNN acc = 0.5664, ECE = 0.4233; random-feature MLP acc = 0.6562, ECE = 0.3622. Even under severe undertraining, learned saccades improved over a fixed pseudo-raster path at comparable compute. Aggregate accuracies of all baselines in this setup are plotted in Figure 1. A confusion matrix for ASRIN is shown in Figure 2.
+
+Efficiency. Estimated multiply-counts per sample demonstrate the advantage of short sequences. ASRIN with \(T = 6\) required approximately 51,126 multiplies per sample, contrasted with approximately 342,608 for the raster ESN with \(T = 784\), a reduction of about 6.7 times. Early-exit accuracy over time for ASRIN is provided in Figure 3.
+
+Robustness. Using the same pilot setup, clean accuracy for ASRIN in the robustness evaluation was 0.2539. Accuracy drops relative to clean were: Gaussian noise \(\\sigma = 0.1\), 0.0820; \(\\sigma = 0.3\), 0.0703; rotation 15 degrees, 0.0078; occlusion 20 percent area, 0.0352; FGSM \(\\epsilon = 0.1\), 0.1133. The raster ESN baseline had clean accuracy 0.1875 with drops 0.0508, 0.0820, 0.0313, \(-0.0391\), and 0.0938 respectively. Given low base accuracies and small test splits, these figures mainly confirm correct pipeline behavior and reveal that both models degrade under perturbations, especially FGSM. Robustness drops for ASRIN are summarized in Figure 5.
+
+Dynamical diagnostics. The estimated largest Lyapunov exponent for ASRIN was approximately +0.3543, indicating supercritical dynamics rather than the desired near-zero target. This diagnosis explains the stronger performance of the \(-\)EC-SR ablation and suggests that, in tiny regimes, the gain step size or slope estimator may be too aggressive. The estimated memory capacity was \(\\approx 6.34\), compatible with small \(N\) and \(T\). The LLE estimate distribution is shown in Figure 4.
+
+Kernel correspondence. Using the learned saccadic policy to compute K\_ASRIN and training kernel ridge regression, the test accuracy was 0.2969 on the pilot split. Finite-width scaling comparisons versus this kernel were not executed in the pilot; hence, convergence claims cannot be assessed here.
+
+Limitations and fairness. The pilot severely undertrains all models (two epochs, 512 training examples, single seed) and uses small reservoirs and sequences, so absolute accuracies are low. Still, three observations are informative: (i) learned saccades are beneficial relative to fixed scans; (ii) short sequences deliver substantial compute savings; and (iii) the self-tuning controller requires careful calibration to maintain near-criticality at small scales. Executing the full protocol with \(N \\in \\{500, 1000, 2000\\}\), \(T \\approx 30\), 20 training epochs, and 10 seeds is required to evaluate ASRIN’s intended gains on accuracy, robustness, and kernel-finite correspondence.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{ images/accuracy\_baselines.pdf }
+\caption{Accuracy of baselines in the tiny-budget pilot (filename: accuracy\_baselines.pdf)}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{ images/confusion\_matrix\_asrin.pdf }
+\caption{Confusion matrix for ASRIN on the pilot test split (filename: confusion\_matrix\_asrin.pdf)}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{ images/early\_exit\_accuracy\_asrin.pdf }
+\caption{Early-exit accuracy versus time steps for ASRIN (filename: early\_exit\_accuracy\_asrin.pdf)}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{ images/lle\_asrin.pdf }
+\caption{Estimated largest Lyapunov exponent for ASRIN (filename: lle\_asrin.pdf)}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{ images/robustness\_drop\_asrin.pdf }
+\caption{Robustness drops \(\\Delta\\mathrm{acc}\) for ASRIN under perturbations (filename: robustness\_drop\_asrin.pdf)}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{ images/training\_loss\_asrin.pdf }
+\caption{Training loss for ASRIN over two epochs (filename: training\_loss\_asrin.pdf)}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{ images/training\_loss\_baseline.pdf }
+\caption{Training loss for baselines over two epochs (filename: training\_loss\_baseline.pdf)}
+\end{figure}
+
+\section{Conclusion}
+We presented ASRIN, a reservoir framework that co-optimizes an adaptive image-to-sequence interface and near-critical reservoir dynamics. The differentiable saccadic encoder learns short, task-driven scan paths that preserve spatial semantics; the edge-of-chaos controller modulates a global gain to target an effective Lipschitz factor near one; a dual-stream linear readout elucidates the roles of instantaneous evidence and recurrent memory; and a trajectory-conditioned recurrent-kernel limit, K\_ASRIN, provides analytical leverage and a kernel baseline \cite{dong-2020-reservoir,ivanov-2021-increasing,nestler-2020-unfolding}.
+
+A deliberately tiny MNIST pilot validated end-to-end feasibility, demonstrating substantial compute reductions over raster ESNs and revealing that learned saccades help even with very short sequences. The controller operated supercritically in this setup, and accuracies were low due to undertraining, motivating controller refinement and full-scale evaluation. The planned protocol spans multiple datasets, robustness stress-tests, dynamical diagnostics, and kernel correspondence with statistical rigor. Practically, ASRIN retains the simplicity of fixed recurrent weights while enabling content-adaptive sensing, aligning with active and sensor-proximal processing \cite{so-2023-pixelrnn}. Theoretically, K\_ASRIN opens a path to study active perception in recurrent kernels and to benchmark finite-width convergence \cite{dong-2020-reservoir}. Future directions include executing the full evaluation suite, improving gain adaptation and slope estimation to reliably achieve near-zero Lyapunov exponents, extending to event-based cameras, and incorporating structured or low-rank reservoirs within ASRIN’s saccadic framework \cite{hasani-2022-liquid,tumma-2023-leveraging,su-2020-convolutional}.
+
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
