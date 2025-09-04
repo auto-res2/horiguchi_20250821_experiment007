@@ -6,5 +6,82 @@
     "spatiotemporal encoding MNIST",
     "reservoir dynamics robustness",
     "liquid state machine MNIST"
+  ],
+  "research_study_list": [
+    {
+      "title": "Reservoir Computing meets Recurrent Kernels and Structured Transforms"
+    },
+    {
+      "title": "Reservoir Computing meets Recurrent Kernels and Structured Transforms"
+    },
+    {
+      "title": "Increasing Liquid State Machine Performance with Edge-of-Chaos Dynamics Organized by Astrocyte-modulated Plasticity"
+    },
+    {
+      "title": "Recurrent Quantum Neural Networks"
+    },
+    {
+      "title": "Unfolding recurrence by Green’s functions for optimized reservoir computing"
+    },
+    {
+      "title": "Recurrent Quantum Neural Networks"
+    },
+    {
+      "title": "Bifurcations and loss jumps in RNN training"
+    },
+    {
+      "title": "Training Linear Finite-State Machines"
+    },
+    {
+      "title": "UnICORNN: A recurrent model for learning very long time dependencies"
+    },
+    {
+      "title": "Improved memory in recurrent neural networks with sequential non-normal dynamics"
+    },
+    {
+      "title": "Continuous Spatiotemporal Transformer"
+    },
+    {
+      "title": "PixelRNN: In-pixel Recurrent Neural Networks for End-to-end–optimized Perception with Neural Sensors"
+    },
+    {
+      "title": "Video Compression With Entropy-Constrained Neural Representations"
+    },
+    {
+      "title": "Convolutional Tensor-Train LSTM for Spatio-Temporal Learning"
+    },
+    {
+      "title": "Learning low-dimensional generalizable natural features from retina using a U-net"
+    },
+    {
+      "title": "Unfolding recurrence by Green’s functions for optimized reservoir computing"
+    },
+    {
+      "title": "Leveraging Low-Rank and Sparse Recurrent Connectivity for Robust Closed-Loop Control"
+    },
+    {
+      "title": "Back to the Continuous Attractor"
+    },
+    {
+      "title": "Robust Stable Spiking Neural Networks"
+    },
+    {
+      "title": "Learning rule influences recurrent network representations but not attractor structure in decision-making tasks"
+    },
+    {
+      "title": "Increasing Liquid State Machine Performance with Edge-of-Chaos Dynamics Organized by Astrocyte-modulated Plasticity"
+    },
+    {
+      "title": "Training Linear Finite-State Machines"
+    },
+    {
+      "title": "Recurrent Quantum Neural Networks"
+    },
+    {
+      "title": "Slot Machines: Discovering Winning Combinations of Random Weights in Neural Networks"
+    },
+    {
+      "title": "Liquid Structural State-Space Models"
+    }
   ]
 }
