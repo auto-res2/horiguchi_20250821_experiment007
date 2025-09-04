@@ -1,0 +1,10 @@
+{
+  "research_topic": "We would like to explore how reservoir computing can classify MNIST digits by encoding static images into temporal sequences and studying the role of reservoir dynamics in accuracy and robustness.",
+  "queries": [
+    "reservoir computing MNIST",
+    "echo state network digits",
+    "spatiotemporal encoding MNIST",
+    "reservoir dynamics robustness",
+    "liquid state machine MNIST"
+  ]
+}
