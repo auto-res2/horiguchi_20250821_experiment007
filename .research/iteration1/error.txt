@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 189, in _run_module_as_main
+  File "<frozen runpy>", line 159, in _get_module_details
+  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/runner/work/horiguchi_20250821_experiment007/horiguchi_20250821_experiment007/src/main.py", line 83
+    print(f'[ASRIN] Epoch {e+1}/{cfg['epochs']} - train_loss={tl:.4f} train_acc={ta:.4f} val_acc={va:.4f} val_ece={ve:.4f} t90={t90 if t90 is not None else float('nan'):.2f}')
+                                      ^^^^^^
+SyntaxError: f-string: unmatched '['
