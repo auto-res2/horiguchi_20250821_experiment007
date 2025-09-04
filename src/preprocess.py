@@ -1,4 +1,5 @@
 import os
+from torch.utils import data
 from torch.utils.data import DataLoader, Subset
 from torchvision import datasets, transforms
 

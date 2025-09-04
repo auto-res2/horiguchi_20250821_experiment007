@@ -219,7 +219,8 @@ class RasterESN(nn.Module):
         B = images.size(0)
         x = images.view(B, -1).t().unsqueeze(-1)  # (T,B,1)
         hs = self.esn(x, enable_ecsr=False)
-        x_last = x[-1].squeeze(-1)
+        # Keep x_last as shape (B,1) to concatenate with (B,N)
+        x_last = x[-1].reshape(B, 1)
         h_last = hs[-1]
         return self.readout(torch.cat([x_last, h_last], dim=1))
 

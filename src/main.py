@@ -1,6 +1,7 @@
 import os
 import argparse
 import yaml
+import numpy as np
 import torch
 
 from .preprocess import get_loaders, ensure_dir
@@ -274,8 +275,8 @@ def main():
     device = get_device(cfg.get('device', 'auto'))
     cfg['device'] = device
 
-    # Prepare image output dir
-    images_dir = os.path.join('.research', 'iteration1', 'images')
+    # Prepare image output dir (iteration2 as requested)
+    images_dir = os.path.join('.research', 'iteration2', 'images')
     ensure_dir(images_dir)
 
     # Run Experiment 1
