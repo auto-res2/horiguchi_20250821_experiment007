@@ -3,6 +3,7 @@ import argparse
 import yaml
 import numpy as np
 import torch
+from sklearn.kernel_ridge import KernelRidge
 
 from .preprocess import get_loaders, ensure_dir
 from .train import set_seed, ASRIN, ASRIN_NoDSE, RasterESN, SmallCNN, RandomFeatureMLP, train_one_epoch
@@ -275,8 +276,8 @@ def main():
     device = get_device(cfg.get('device', 'auto'))
     cfg['device'] = device
 
-    # Prepare image output dir (iteration4 as requested)
-    images_dir = os.path.join('.research', 'iteration4', 'images')
+    # Prepare image output dir (iteration5 as requested)
+    images_dir = os.path.join('.research', 'iteration5', 'images')
     ensure_dir(images_dir)
 
     # Run Experiment 1
