@@ -5,3 +5,475 @@
   publisher = {GitHub},
   url       = {https://github.com/airas-org/airas}
 }
+
+% ===========================================
+% REQUIRED CITATIONS
+% These papers must be cited in the manuscript
+% ===========================================
+
+@article{aladago-2021-slot,
+ abstract = {In contrast to traditional weight optimization in a continuous space, we
+demonstrate the existence of effective random networks whose weights are never
+updated. By selecting a weight among a fixed set of random values for each
+individual connection, our method uncovers combinations of random weights that
+match the performance of traditionally-trained networks of the same capacity.
+We refer to our networks as "slot machines" where each reel (connection)
+contains a fixed set of symbols (random values). Our backpropagation algorithm
+"spins" the reels to seek "winning" combinations, i.e., selections of random
+weight values that minimize the given loss. Quite surprisingly, we find that
+allocating just a few random values to each connection (e.g., 8 values per
+connection) yields highly competitive combinations despite being dramatically
+more constrained compared to traditionally learned weights. Moreover,
+finetuning these combinations often improves performance over the trained
+baselines. A randomly initialized VGG-19 with 8 values per connection contains
+a combination that achieves 91% test accuracy on CIFAR-10. Our method also
+achieves an impressive performance of 98.2% on MNIST for neural networks
+containing only random weights.},
+ arxiv_url = {https://arxiv.org/pdf/2101.06475v3.pdf},
+ author = {Maxwell Mbabilla Aladago and Lorenzo Torresani},
+ title = {Slot Machines: Discovering Winning Combinations of Random Weights in Neural Networks},
+ year = {2021}
+}
+
+@article{author-year-learning,
+ title = {Learning low-dimensional generalizable natural features from retina using a U-net}
+}
+
+@article{author-year-training,
+ title = {Training Linear Finite-State Machines}
+}
+
+@article{author-year-video,
+ title = {Video Compression With Entropy-Constrained Neural Representations}
+}
+
+@article{bausch-2020-recurrent,
+ abstract = {Recurrent neural networks are the foundation of many sequence-to-sequence
+models in machine learning, such as machine translation and speech synthesis.
+In contrast, applied quantum computing is in its infancy. Nevertheless there
+already exist quantum machine learning models such as variational quantum
+eigensolvers which have been used successfully e.g. in the context of energy
+minimization tasks. In this work we construct a quantum recurrent neural
+network (QRNN) with demonstrable performance on non-trivial tasks such as
+sequence learning and integer digit classification. The QRNN cell is built from
+parametrized quantum neurons, which, in conjunction with amplitude
+amplification, create a nonlinear activation of polynomials of its inputs and
+cell state, and allow the extraction of a probability distribution over
+predicted classes at each step. To study the model's performance, we provide an
+implementation in pytorch, which allows the relatively efficient optimization
+of parametrized quantum circuits with thousands of parameters. We establish a
+QRNN training setup by benchmarking optimization hyperparameters, and analyse
+suitable network topologies for simple memorisation and sequence prediction
+tasks from Elman's seminal paper (1990) on temporal structure learning. We then
+proceed to evaluate the QRNN on MNIST classification, both by feeding the QRNN
+each image pixel-by-pixel; and by utilising modern data augmentation as
+preprocessing step. Finally, we analyse to what extent the unitary nature of
+the network counteracts the vanishing gradient problem that plagues many
+existing quantum classifiers and classical RNNs.},
+ arxiv_url = {https://arxiv.org/pdf/2006.14619v1.pdf},
+ author = {Johannes Bausch},
+ journal = {Advances in Neural Information Processing Systems 33 (NeurIPS
+  2020)},
+ title = {Recurrent Quantum Neural Networks},
+ year = {2020}
+}
+
+@article{ding-2024-robust,
+ abstract = {Spiking neural networks (SNNs) are gaining popularity in deep learning due to
+their low energy budget on neuromorphic hardware. However, they still face
+challenges in lacking sufficient robustness to guard safety-critical
+applications such as autonomous driving. Many studies have been conducted to
+defend SNNs from the threat of adversarial attacks. This paper aims to uncover
+the robustness of SNN through the lens of the stability of nonlinear systems.
+We are inspired by the fact that searching for parameters altering the leaky
+integrate-and-fire dynamics can enhance their robustness. Thus, we dive into
+the dynamics of membrane potential perturbation and simplify the formulation of
+the dynamics. We present that membrane potential perturbation dynamics can
+reliably convey the intensity of perturbation. Our theoretical analyses imply
+that the simplified perturbation dynamics satisfy input-output stability. Thus,
+we propose a training framework with modified SNN neurons and to reduce the
+mean square of membrane potential perturbation aiming at enhancing the
+robustness of SNN. Finally, we experimentally verify the effectiveness of the
+framework in the setting of Gaussian noise training and adversarial training on
+the image classification task.},
+ arxiv_url = {https://arxiv.org/pdf/2405.20694v1.pdf},
+ author = {Jianhao Ding and Zhiyu Pan and Yujia Liu and Zhaofei Yu and Tiejun Huang},
+ title = {Robust Stable Spiking Neural Networks},
+ year = {2024}
+}
+
+@article{dong-2020-reservoir,
+ abstract = {Reservoir Computing is a class of simple yet efficient Recurrent Neural
+Networks where internal weights are fixed at random and only a linear output
+layer is trained. In the large size limit, such random neural networks have a
+deep connection with kernel methods. Our contributions are threefold: a) We
+rigorously establish the recurrent kernel limit of Reservoir Computing and
+prove its convergence. b) We test our models on chaotic time series prediction,
+a classic but challenging benchmark in Reservoir Computing, and show how the
+Recurrent Kernel is competitive and computationally efficient when the number
+of data points remains moderate. c) When the number of samples is too large, we
+leverage the success of structured Random Features for kernel approximation by
+introducing Structured Reservoir Computing. The two proposed methods, Recurrent
+Kernel and Structured Reservoir Computing, turn out to be much faster and more
+memory-efficient than conventional Reservoir Computing.},
+ arxiv_url = {https://arxiv.org/pdf/2006.07310v2.pdf},
+ author = {Jonathan Dong and Ruben Ohana and Mushegh Rafayelyan and Florent Krzakala},
+ github_url = {https://github.com/rubenohana/Reservoir-computing-kernels},
+ journal = {Advances in Neural Information Processing Systems, v33, pages
+  16785--16796, 2020},
+ title = {Reservoir Computing meets Recurrent Kernels and Structured Transforms},
+ year = {2020}
+}
+
+@article{eisenmann-2023-bifurcations,
+ abstract = {Recurrent neural networks (RNNs) are popular machine learning tools for
+modeling and forecasting sequential data and for inferring dynamical systems
+(DS) from observed time series. Concepts from DS theory (DST) have variously
+been used to further our understanding of both, how trained RNNs solve complex
+tasks, and the training process itself. Bifurcations are particularly important
+phenomena in DS, including RNNs, that refer to topological (qualitative)
+changes in a system's dynamical behavior as one or more of its parameters are
+varied. Knowing the bifurcation structure of an RNN will thus allow to deduce
+many of its computational and dynamical properties, like its sensitivity to
+parameter variations or its behavior during training. In particular,
+bifurcations may account for sudden loss jumps observed in RNN training that
+could severely impede the training process. Here we first mathematically prove
+for a particular class of ReLU-based RNNs that certain bifurcations are indeed
+associated with loss gradients tending toward infinity or zero. We then
+introduce a novel heuristic algorithm for detecting all fixed points and
+k-cycles in ReLU-based RNNs and their existence and stability regions, hence
+bifurcation manifolds in parameter space. In contrast to previous numerical
+algorithms for finding fixed points and common continuation methods, our
+algorithm provides exact results and returns fixed points and cycles up to high
+orders with surprisingly good scaling behavior. We exemplify the algorithm on
+the analysis of the training process of RNNs, and find that the recently
+introduced technique of generalized teacher forcing completely avoids certain
+types of bifurcations in training. Thus, besides facilitating the DST analysis
+of trained RNNs, our algorithm provides a powerful instrument for analyzing the
+training process itself.},
+ arxiv_url = {https://arxiv.org/pdf/2310.17561v1.pdf},
+ author = {Lukas Eisenmann and Zahra Monfared and Niclas Alexander Göring and Daniel Durstewitz},
+ github_url = {https://github.com/DurstewitzLab/SCYFI},
+ title = {Bifurcations and loss jumps in RNN training},
+ year = {2023}
+}
+
+@article{fonseca-2023-continuous,
+ abstract = {Modeling spatiotemporal dynamical systems is a fundamental challenge in
+machine learning. Transformer models have been very successful in NLP and
+computer vision where they provide interpretable representations of data.
+However, a limitation of transformers in modeling continuous dynamical systems
+is that they are fundamentally discrete time and space models and thus have no
+guarantees regarding continuous sampling. To address this challenge, we present
+the Continuous Spatiotemporal Transformer (CST), a new transformer architecture
+that is designed for the modeling of continuous systems. This new framework
+guarantees a continuous and smooth output via optimization in Sobolev space. We
+benchmark CST against traditional transformers as well as other spatiotemporal
+dynamics modeling methods and achieve superior performance in a number of tasks
+on synthetic and real systems, including learning brain dynamics from calcium
+imaging data.},
+ arxiv_url = {https://arxiv.org/pdf/2301.13338v2.pdf},
+ author = {Antonio H. de O. Fonseca and Emanuele Zappala and Josue Ortega Caro and David van Dijk},
+ github_url = {https://github.com/vandijklab/CST},
+ title = {Continuous Spatiotemporal Transformer},
+ year = {2023}
+}
+
+@article{hasani-2022-liquid,
+ abstract = {A proper parametrization of state transition matrices of linear state-space
+models (SSMs) followed by standard nonlinearities enables them to efficiently
+learn representations from sequential data, establishing the state-of-the-art
+on a large series of long-range sequence modeling benchmarks. In this paper, we
+show that we can improve further when the structural SSM such as S4 is given by
+a linear liquid time-constant (LTC) state-space model. LTC neural networks are
+causal continuous-time neural networks with an input-dependent state transition
+module, which makes them learn to adapt to incoming inputs at inference. We
+show that by using a diagonal plus low-rank decomposition of the state
+transition matrix introduced in S4, and a few simplifications, the LTC-based
+structural state-space model, dubbed Liquid-S4, achieves the new
+state-of-the-art generalization across sequence modeling tasks with long-term
+dependencies such as image, text, audio, and medical time-series, with an
+average performance of 87.32% on the Long-Range Arena benchmark. On the full
+raw Speech Command recognition, dataset Liquid-S4 achieves 96.78% accuracy with
+a 30% reduction in parameter counts compared to S4. The additional gain in
+performance is the direct result of the Liquid-S4's kernel structure that takes
+into account the similarities of the input sequence samples during training and
+inference.},
+ arxiv_url = {https://arxiv.org/pdf/2209.12951v1.pdf},
+ author = {Ramin Hasani and Mathias Lechner and Tsun-Hsuan Wang and Makram Chahine and Alexander Amini and Daniela Rus},
+ github_url = {https://github.com/raminmh/liquid-s4},
+ title = {Liquid Structural State-Space Models},
+ year = {2022}
+}
+
+@article{ivanov-2021-increasing,
+ abstract = {The liquid state machine (LSM) combines low training complexity and
+biological plausibility, which has made it an attractive machine learning
+framework for edge and neuromorphic computing paradigms. Originally proposed as
+a model of brain computation, the LSM tunes its internal weights without
+backpropagation of gradients, which results in lower performance compared to
+multi-layer neural networks. Recent findings in neuroscience suggest that
+astrocytes, a long-neglected non-neuronal brain cell, modulate synaptic
+plasticity and brain dynamics, tuning brain networks to the vicinity of the
+computationally optimal critical phase transition between order and chaos.
+Inspired by this disruptive understanding of how brain networks self-tune, we
+propose the neuron-astrocyte liquid state machine (NALSM) that addresses
+under-performance through self-organized near-critical dynamics. Similar to its
+biological counterpart, the astrocyte model integrates neuronal activity and
+provides global feedback to spike-timing-dependent plasticity (STDP), which
+self-organizes NALSM dynamics around a critical branching factor that is
+associated with the edge-of-chaos. We demonstrate that NALSM achieves
+state-of-the-art accuracy versus comparable LSM methods, without the need for
+data-specific hand-tuning. With a top accuracy of 97.61% on MNIST, 97.51% on
+N-MNIST, and 85.84% on Fashion-MNIST, NALSM achieved comparable performance to
+current fully-connected multi-layer spiking neural networks trained via
+backpropagation. Our findings suggest that the further development of
+brain-inspired machine learning methods has the potential to reach the
+performance of deep learning, with the added benefits of supporting robust and
+energy-efficient neuromorphic computing on the edge.},
+ arxiv_url = {https://arxiv.org/pdf/2111.01760v1.pdf},
+ author = {Vladimir A. Ivanov and Konstantinos P. Michmizos},
+ github_url = {https://github.com/combra-lab/NALSM},
+ journal = {35th Conference on Neural Information Processing Systems (NeurIPS
+  2021)},
+ title = {Increasing Liquid State Machine Performance with Edge-of-Chaos Dynamics Organized by Astrocyte-modulated Plasticity},
+ year = {2021}
+}
+
+@article{nestler-2020-unfolding,
+ abstract = {Cortical networks are strongly recurrent, and neurons have intrinsic temporal
+dynamics. This sets them apart from deep feed-forward networks. Despite the
+tremendous progress in the application of feed-forward networks and their
+theoretical understanding, it remains unclear how the interplay of recurrence
+and non-linearities in recurrent cortical networks contributes to their
+function. The purpose of this work is to present a solvable recurrent network
+model that links to feed forward networks. By perturbative methods we transform
+the time-continuous, recurrent dynamics into an effective feed-forward
+structure of linear and non-linear temporal kernels. The resulting analytical
+expressions allow us to build optimal time-series classifiers from random
+reservoir networks. Firstly, this allows us to optimize not only the readout
+vectors, but also the input projection, demonstrating a strong potential
+performance gain. Secondly, the analysis exposes how the second order stimulus
+statistics is a crucial element that interacts with the non-linearity of the
+dynamics and boosts performance.},
+ arxiv_url = {https://arxiv.org/pdf/2010.06247v2.pdf},
+ author = {Sandra Nestler and Christian Keup and David Dahmen and Matthieu Gilson and Holger Rauhut and Moritz Helias},
+ journal = {Advances in Neural Information Processing Systems 33 (NeurIPS
+  2020), 17380--17390},
+ title = {Unfolding recurrence by Green’s functions for optimized reservoir computing},
+ year = {2020}
+}
+
+@article{orhan-2019-improved,
+ abstract = {Training recurrent neural networks (RNNs) is a hard problem due to
+degeneracies in the optimization landscape, a problem also known as
+vanishing/exploding gradients. Short of designing new RNN architectures,
+previous methods for dealing with this problem usually boil down to
+orthogonalization of the recurrent dynamics, either at initialization or during
+the entire training period. The basic motivation behind these methods is that
+orthogonal transformations are isometries of the Euclidean space, hence they
+preserve (Euclidean) norms and effectively deal with vanishing/exploding
+gradients. However, this ignores the crucial effects of non-linearity and
+noise. In the presence of a non-linearity, orthogonal transformations no longer
+preserve norms, suggesting that alternative transformations might be better
+suited to non-linear networks. Moreover, in the presence of noise, norm
+preservation itself ceases to be the ideal objective. A more sensible objective
+is maximizing the signal-to-noise ratio (SNR) of the propagated signal instead.
+Previous work has shown that in the linear case, recurrent networks that
+maximize the SNR display strongly non-normal, sequential dynamics and
+orthogonal networks are highly suboptimal by this measure. Motivated by this
+finding, here we investigate the potential of non-normal RNNs, i.e. RNNs with a
+non-normal recurrent connectivity matrix, in sequential processing tasks. Our
+experimental results show that non-normal RNNs outperform their orthogonal
+counterparts in a diverse range of benchmarks. We also find evidence for
+increased non-normality and hidden chain-like feedforward motifs in trained
+RNNs initialized with orthogonal recurrent connectivity matrices.},
+ arxiv_url = {https://arxiv.org/pdf/1905.13715v2.pdf},
+ author = {A. Emin Orhan and Xaq Pitkow},
+ github_url = {https://github.com/eminorhan/nonnormal-init},
+ title = {Improved memory in recurrent neural networks with sequential non-normal dynamics},
+ year = {2019}
+}
+
+@article{rusch-2021-unicornn,
+ abstract = {The design of recurrent neural networks (RNNs) to accurately process
+sequential inputs with long-time dependencies is very challenging on account of
+the exploding and vanishing gradient problem. To overcome this, we propose a
+novel RNN architecture which is based on a structure preserving discretization
+of a Hamiltonian system of second-order ordinary differential equations that
+models networks of oscillators. The resulting RNN is fast, invertible (in
+time), memory efficient and we derive rigorous bounds on the hidden state
+gradients to prove the mitigation of the exploding and vanishing gradient
+problem. A suite of experiments are presented to demonstrate that the proposed
+RNN provides state of the art performance on a variety of learning tasks with
+(very) long-time dependencies.},
+ arxiv_url = {https://arxiv.org/pdf/2103.05487v2.pdf},
+ author = {T. Konstantin Rusch and Siddhartha Mishra},
+ github_url = {https://github.com/tk-rusch/unicornn},
+ title = {UnICORNN: A recurrent model for learning very long time dependencies},
+ year = {2021}
+}
+
+@article{sgodi-2024-back,
+ abstract = {Continuous attractors offer a unique class of solutions for storing
+continuous-valued variables in recurrent system states for indefinitely long
+time intervals. Unfortunately, continuous attractors suffer from severe
+structural instability in general--they are destroyed by most infinitesimal
+changes of the dynamical law that defines them. This fragility limits their
+utility especially in biological systems as their recurrent dynamics are
+subject to constant perturbations. We observe that the bifurcations from
+continuous attractors in theoretical neuroscience models display various
+structurally stable forms. Although their asymptotic behaviors to maintain
+memory are categorically distinct, their finite-time behaviors are similar. We
+build on the persistent manifold theory to explain the commonalities between
+bifurcations from and approximations of continuous attractors. Fast-slow
+decomposition analysis uncovers the persistent manifold that survives the
+seemingly destructive bifurcation. Moreover, recurrent neural networks trained
+on analog memory tasks display approximate continuous attractors with predicted
+slow manifold structures. Therefore, continuous attractors are functionally
+robust and remain useful as a universal analogy for understanding analog
+memory.},
+ arxiv_url = {https://arxiv.org/pdf/2408.00109v3.pdf},
+ author = {Ábel Ságodi and Guillermo Martín-Sánchez and Piotr Sokół and Il Memming Park},
+ journal = {In Proceedings of the 38th Conference on Neural Information
+  Processing Systems (NeurIPS 2024)},
+ title = {Back to the Continuous Attractor},
+ year = {2024}
+}
+
+@article{so-2023-pixelrnn,
+ abstract = {Conventional image sensors digitize high-resolution images at fast frame
+rates, producing a large amount of data that needs to be transmitted off the
+sensor for further processing. This is challenging for perception systems
+operating on edge devices, because communication is power inefficient and
+induces latency. Fueled by innovations in stacked image sensor fabrication,
+emerging sensor-processors offer programmability and minimal processing
+capabilities directly on the sensor. We exploit these capabilities by
+developing an efficient recurrent neural network architecture, PixelRNN, that
+encodes spatio-temporal features on the sensor using purely binary operations.
+PixelRNN reduces the amount of data to be transmitted off the sensor by a
+factor of 64x compared to conventional systems while offering competitive
+accuracy for hand gesture recognition and lip reading tasks. We experimentally
+validate PixelRNN using a prototype implementation on the SCAMP-5
+sensor-processor platform.},
+ arxiv_url = {https://arxiv.org/pdf/2304.05440v1.pdf},
+ author = {Haley M. So and Laurie Bose and Piotr Dudek and Gordon Wetzstein},
+ title = {PixelRNN: In-pixel Recurrent Neural Networks for End-to-end–optimized Perception with Neural Sensors},
+ year = {2023}
+}
+
+@article{su-2020-convolutional,
+ abstract = {Learning from spatio-temporal data has numerous applications such as
+human-behavior analysis, object tracking, video compression, and physics
+simulation.However, existing methods still perform poorly on challenging video
+tasks such as long-term forecasting. This is because these kinds of challenging
+tasks require learning long-term spatio-temporal correlations in the video
+sequence. In this paper, we propose a higher-order convolutional LSTM model
+that can efficiently learn these correlations, along with a succinct
+representations of the history. This is accomplished through a novel tensor
+train module that performs prediction by combining convolutional features
+across time. To make this feasible in terms of computation and memory
+requirements, we propose a novel convolutional tensor-train decomposition of
+the higher-order model. This decomposition reduces the model complexity by
+jointly approximating a sequence of convolutional kernels asa low-rank
+tensor-train factorization. As a result, our model outperforms existing
+approaches, but uses only a fraction of parameters, including the baseline
+models.Our results achieve state-of-the-art performance in a wide range of
+applications and datasets, including the multi-steps video prediction on the
+Moving-MNIST-2and KTH action datasets as well as early activity recognition on
+the Something-Something V2 dataset.},
+ arxiv_url = {https://arxiv.org/pdf/2002.09131v5.pdf},
+ author = {Jiahao Su and Wonmin Byeon and Jean Kossaifi and Furong Huang and Jan Kautz and Animashree Anandkumar},
+ github_url = {https://github.com/Yunbo426/predrnn-pp},
+ title = {Convolutional Tensor-Train LSTM for Spatio-Temporal Learning},
+ year = {2020}
+}
+
+@article{tumma-2023-leveraging,
+ abstract = {Developing autonomous agents that can interact with changing environments is
+an open challenge in machine learning. Robustness is particularly important in
+these settings as agents are often fit offline on expert demonstrations but
+deployed online where they must generalize to the closed feedback loop within
+the environment. In this work, we explore the application of recurrent neural
+networks to tasks of this nature and understand how a parameterization of their
+recurrent connectivity influences robustness in closed-loop settings.
+Specifically, we represent the recurrent connectivity as a function of rank and
+sparsity and show both theoretically and empirically that modulating these two
+variables has desirable effects on network dynamics. The proposed low-rank,
+sparse connectivity induces an interpretable prior on the network that proves
+to be most amenable for a class of models known as closed-form continuous-time
+neural networks (CfCs). We find that CfCs with fewer parameters can outperform
+their full-rank, fully-connected counterparts in the online setting under
+distribution shift. This yields memory-efficient and robust agents while
+opening a new perspective on how we can modulate network dynamics through
+connectivity.},
+ arxiv_url = {https://arxiv.org/pdf/2310.03915v3.pdf},
+ author = {Neehal Tumma and Mathias Lechner and Noel Loo and Ramin Hasani and Daniela Rus},
+ title = {Leveraging Low-Rank and Sparse Recurrent Connectivity for Robust Closed-Loop Control},
+ year = {2023}
+}
+
+% ===========================================
+% REFERENCE CANDIDATES
+% Additional reference papers for context
+% ===========================================
+
+@article{author-year-deep,
+ title = {Deep liquid state machines with neural plasticity for video activity recognition}
+}
+
+@article{author-year-stdp,
+ title = {Ap-stdp: A novel self-organizing mechanism for efﬁcient reservoir computing}
+}
+
+@article{tang-2019-spiking,
+ abstract = {Energy-efficient simultaneous localization and mapping (SLAM) is crucial for
+mobile robots exploring unknown environments. The mammalian brain solves SLAM
+via a network of specialized neurons, exhibiting asynchronous computations and
+event-based communications, with very low energy consumption. We propose a
+brain-inspired spiking neural network (SNN) architecture that solves the
+unidimensional SLAM by introducing spike-based reference frame transformation,
+visual likelihood computation, and Bayesian inference. We integrated our
+neuromorphic algorithm to Intel's Loihi neuromorphic processor, a non-Von
+Neumann hardware that mimics the brain's computing paradigms. We performed
+comparative analyses for accuracy and energy-efficiency between our
+neuromorphic approach and the GMapping algorithm, which is widely used in small
+environments. Our Loihi-based SNN architecture consumes 100 times less energy
+than GMapping run on a CPU while having comparable accuracy in head direction
+localization and map-generation. These results pave the way for scaling our
+approach towards active-SLAM alternative solutions for Loihi-controlled
+autonomous robots.},
+ arxiv_url = {https://arxiv.org/pdf/1903.02504v2.pdf},
+ author = {Guangzhi Tang and Arpit Shah and Konstantinos P. Michmizos},
+ journal = {2019 IEEE/RSJ International Conference on Intelligent Robots and
+  Systems (IROS)},
+ title = {Spiking neural network on neu- romorphic hardware for energy-efﬁcient unidimensional slam},
+ year = {2019}
+}
+
+@article{tang-2020-reinforcement,
+ abstract = {Energy-efficient mapless navigation is crucial for mobile robots as they
+explore unknown environments with limited on-board resources. Although the
+recent deep reinforcement learning (DRL) approaches have been successfully
+applied to navigation, their high energy consumption limits their use in
+several robotic applications. Here, we propose a neuromorphic approach that
+combines the energy-efficiency of spiking neural networks with the optimality
+of DRL and benchmark it in learning control policies for mapless navigation.
+Our hybrid framework, spiking deep deterministic policy gradient (SDDPG),
+consists of a spiking actor network (SAN) and a deep critic network, where the
+two networks were trained jointly using gradient descent. The co-learning
+enabled synergistic information exchange between the two networks, allowing
+them to overcome each other's limitations through a shared representation
+learning. To evaluate our approach, we deployed the trained SAN on Intel's
+Loihi neuromorphic processor. When validated on simulated and real-world
+complex environments, our method on Loihi consumed 75 times less energy per
+inference as compared to DDPG on Jetson TX2, and also exhibited a higher rate
+of successful navigation to the goal, which ranged from 1% to 4.2% and depended
+on the forward-propagation timestep size. These results reinforce our ongoing
+efforts to design brain-inspired algorithms for controlling autonomous robots
+with neuromorphic hardware.},
+ arxiv_url = {https://arxiv.org/pdf/2003.01157v2.pdf},
+ author = {Guangzhi Tang and Neelesh Kumar and Konstantinos P. Michmizos},
+ title = {Reinforcement co-learning of deep and spiking neural networks for energy-efﬁcient mapless navigation with neuromorphic hardware},
+ year = {2020}
+}
